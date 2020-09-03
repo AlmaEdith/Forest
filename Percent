@@ -1,0 +1,23 @@
+SELECT t1.country_name, t1.forest_area_1990, t2.forest_area_2016, 
+( t1.forest_area_1990 - t2.forest_area_2016 ) forest_area_x, 
+((1-(t2.forest_area_2016/t1.forest_area_1990))*100) per
+FROM (
+ SELECT country_name, region,
+ forest_area_sqkm AS forest_area_1990
+ FROM forestation
+ WHERE year = 1990
+ AND forest_area_sqkm IS NOT NULL
+ AND total_area_sq_mi IS NOT NULL
+ GROUP BY 1,2,3)t1
+JOIN
+ (SELECT country_name,
+ region,
+ forest_area_sqkm AS forest_area_2016
+ FROM forestation
+ WHERE year = 2016
+ AND forest_area_sqkm IS NOT NULL
+ AND total_area_sq_mi IS NOT NULL
+ GROUP BY 1,2,3)t2
+ON t1.country_name = t2.country_name
+ORDER BY 4
+;
